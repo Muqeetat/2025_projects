@@ -4,7 +4,7 @@ This document explains how I cleaned the dataset using SQL.
 
 ## Dataset Information
 - **Dataset Link:** [Cafe Sales Dirty Dataset](https://www.kaggle.com/datasets/ahmedmohamed2003/cafe-sales-dirty-data-for-cleaning-training/data)
-- **Notion Link:** [Dataset Cleaning Project](https://www.notion.so/Dataset-Cleaning-Project-19b747e5d0ef8009aeedc90339302703?pvs=4)
+- **Notion Link:** [Dataset Cleaning Project](https://destiny-babcat-d2e.notion.site/Dataset-Cleaning-Project-19b747e5d0ef8009aeedc90339302703)
 
 ## Tables Used
 - **cafe_sales** - The table with clean data.
