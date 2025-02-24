@@ -20,6 +20,7 @@ def create_complaint(complaint: Complaint, session: Session = Depends(get_sessio
     return complaint
 
 # python -m app.main
+
 # Combined endpoint to get Complaints by ID, location,date or all
 @router.get("/", response_model=list[Complaint], response_model_exclude={"id","created_at", "updated_at"})
 def get_complaint(
@@ -35,7 +36,7 @@ def get_complaint(
 
 	# Filter the query based on the parameters
     if complaint_id:
-        query = query.filter(Complaint.id == request_id)
+        query = query.filter(Complaint.id == complaint_id)
     if location:
         query = query.filter(Complaint.location == location)
     if start_date:
