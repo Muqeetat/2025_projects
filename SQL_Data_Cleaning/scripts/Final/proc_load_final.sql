@@ -44,7 +44,8 @@ BEGIN
                     WHEN CAST(price_per_unit AS FLOAT) = 1.5 THEN 'Tea'
                     WHEN CAST(price_per_unit AS FLOAT) = 2.0 THEN 'Coffee'
                     WHEN CAST(price_per_unit AS FLOAT) = 5.0 THEN 'Salad'
-                    WHEN CAST(price_per_unit AS FLOAT) IN (3.0, 4.0) THEN 'Miscellaneous'
+                    WHEN CAST(price_per_unit AS FLOAT) = 3.0 THEN 'Cake or Juice'
+                    WHEN CAST(price_per_unit AS FLOAT) = 4.0 THEN  'Sandwich or Smoothie'
                     ELSE item
                 END
             -- If total_spent and quantity are valid, calculate item based on their ratio
@@ -58,7 +59,8 @@ BEGIN
                     WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) = 1.5 THEN 'Tea'
                     WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) = 2.0 THEN 'Coffee'
                     WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) = 5.0 THEN 'Salad'
-                    WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) IN (3.0, 4.0) THEN 'Miscellaneous'
+                    WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) = 3.0 THEN 'Cake or Juice'
+                    WHEN CAST(total_spent AS FLOAT) / CAST(quantity AS FLOAT) = 4.0 THEN 'Sandwich or Smoothie'
                 ELSE item
             END
             -- If total_spent is valid, but quantity and price_per_unit is missing or invalid, default item to Miscellaneous
@@ -211,8 +213,7 @@ BEGIN
             WHEN transaction_date IN ('UNKNOWN', 'ERROR', '') THEN NULL
             ELSE CAST(transaction_date AS DATE)
         END AS transaction_date
-    FROM cafe_sales_staging
-    ORDER BY transaction_id;
+    FROM cafe_sales_staging;
 
     end_time := now();
     RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(EPOCH FROM (end_time - start_time));

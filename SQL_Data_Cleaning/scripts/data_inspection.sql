@@ -1,9 +1,9 @@
 SELECT COUNT(*) total_rows
 FROM cafe_sales_staging
 
-=====================================================
+--=====================================================
 --- transcation_id column
-=====================================================
+--=====================================================
 
 -- Check For Nulls or Duplicates in Primary Key
 -- Expectation: No Result
@@ -34,9 +34,9 @@ SELECT transaction_id
 FROM cafe_sales_staging
 WHERE transaction_id != TRIM(transaction_id)
 
-=====================================================
+-- =====================================================
 -- item column 
-=====================================================
+-- =====================================================
 
 -- Check For Nulls
 -- Expectation: No Result
@@ -71,9 +71,9 @@ FROM cafe_sales_staging
 WHERE item in ('UNKNOWN','ERROR','') OR item IS NULL
 ORDER BY price_per_unit, item
 
-=====================================================
+-- =====================================================
 -- quantity Column
-=====================================================
+-- =====================================================
 
 SELECT *
 FROM cafe_sales_staging
@@ -82,9 +82,9 @@ WHERE quantity in ('UNKNOWN','ERROR','') OR quantity IS NULL
 SELECT DISTINCT quantity
 FROM cafe_sales_staging
 
-=====================================================
+-- =====================================================
 -- price_per_unit Column
-=====================================================
+-- =====================================================
 
 SELECT DISTINCT price_per_unit
 FROM cafe_sales_staging
@@ -94,9 +94,9 @@ SELECT *
 FROM cafe_sales_staging
 WHERE price_per_unit in ('UNKNOWN','ERROR','') OR price_per_unit IS NULL
 
-=====================================================
+-- =====================================================
 -- total_spent Column
-=====================================================
+-- =====================================================
 
 SELECT DISTINCT total_spent
 FROM cafe_sales_staging
@@ -105,9 +105,9 @@ SELECT DISTINCT quantity, price_per_unit, total_spent
 FROM cafe_sales_staging
 WHERE total_spent in ('UNKNOWN','ERROR','') OR total_spent IS NULL
 
-=====================================================
+-- =====================================================
 -- payment_method column
-=====================================================
+-- =====================================================
 
 -- Check for unwanted Spaces
 SELECT payment_method
@@ -117,9 +117,9 @@ WHERE payment_method != TRIM(payment_method)
 SELECT DISTINCT payment_method
 FROM cafe_sales_staging
 
-=====================================================
+-- =====================================================
 -- location Column
-=====================================================
+-- =====================================================
 
 -- Check for unwanted Spaces
 SELECT location
@@ -129,9 +129,9 @@ WHERE location != TRIM(location)
 SELECT DISTINCT location
 FROM cafe_sales_staging
 
-=====================================================
+-- =====================================================
 -- transaction_date column
-=====================================================
+-- =====================================================
 
 SELECT *
 FROM cafe_sales_staging

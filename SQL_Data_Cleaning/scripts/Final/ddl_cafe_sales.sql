@@ -6,10 +6,10 @@
 
 
 -- Drop the table if it exists
-DROP TABLE IF EXISTS public.cafe_sales;
+DROP TABLE IF EXISTS cafe_sales;
 
 -- Create the table
-CREATE TABLE public.cafe_sales (
+CREATE TABLE cafe_sales (
     transaction_id VARCHAR(50),
     item VARCHAR(50),
     quantity INT,
