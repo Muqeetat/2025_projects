@@ -29,7 +29,7 @@ def resident_signup(user:UserCreate,session: Session = Depends(get_session)):
     # return user 
 
 
-@router.post("/login")
+@router.post("/resident/login")
 def resident_login(user_credential: OAuth2PasswordRequestForm=Depends(), session: Session = Depends(get_session)):
     if not user_credential.username or not user_credential.password:
         raise HTTPException(status_code=422, detail="Username and password must be provided")
@@ -67,7 +67,7 @@ def admin_signup(user_data: UserCreate, session: Session = Depends(get_session))
     # return new_user
     return {"msg": f"Admin account created successfully for {user_data.name}"}
 
-@router.post("/admin/login")
+@router.post("/login")
 def admin_login(credentials: OAuth2PasswordRequestForm=Depends(), session: Session = Depends(get_session)):
     if not credentials.username or not credentials.password:
         raise HTTPException(status_code=422, detail="Username and password must be provided")
@@ -90,14 +90,21 @@ def admin_login(credentials: OAuth2PasswordRequestForm=Depends(), session: Sessi
 @router.put("/approve/{user_id}")
 def approve_admin(user_id: int, session: Session = Depends(get_session), current_user: User = Depends(require_role("admin"))):
     user = session.exec(select(User).where(User.id == user_id)).first()
+
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User with id {user_id} not found")
 
     if user.role != "admin":
         raise HTTPException(status_code=400, detail="User is not an admin")
 
+    if user.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Admin cannot approve self")
+
     if user.is_approved:
         raise HTTPException(status_code=400, detail="Admin already approved")
+
+    if current_user.id != 1:
+        raise HTTPException(status_code=403, detail="Only admin 1 can approve admins")
 
     user.is_approved = True
     session.add(user)
