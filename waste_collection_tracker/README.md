@@ -1,94 +1,189 @@
-# Lagos Waste Collection API Documentation
+# Lagos Waste Management API (FastAPI & PostgreSQL)
 
-Residents in Lagos face inconsistent waste collection and poor complaint resolution. This project aims to solve that by creating a digital portal that bridges the gap between citizens and the waste services.  
+## Problem
 
-**Steps:**  
+Waste collection in Lagos faces inefficiencies due to inconsistent scheduling and ineffective complaint resolution. Residents struggle with missed pickups and lack a streamlined system for reporting issues, leading to unclean neighborhoods.
 
-1. **Identify the Problem:**  
-   Residents struggle with missed pickups and have no easy way to report issues.  
+## Hypothesis
 
-2. **Solution Idea:**  
-   Develop a platform where residents can:  
-   - Schedule pickups at their convenience  
-   - Submit complaints seamlessly  
-   - Track service completion [in real-time]  
+A structured API with role-based authentication, waste pickup scheduling, complaint tracking, and administrative oversight can enhance waste management efficiency and service responsiveness.
 
-3. **Building the System:**  
-   - **Residents** sign up, request services, and receive updates.  
-   - **Waste Management Teams** receive organized requests, improving efficiency.  
-   - **Admins** monitor activities and respond to complaints promptly.  
+## Approach
 
-4. **Impact:**  
-   The portal boosts responsiveness, reduces littering, and promotes cleaner neighborhoods in Lagos.  
+- Developed a RESTful API using **FastAPI** and **PostgreSQL** for managing waste pickup requests and complaints.
+- Implemented **JWT authentication** for secure user access and role-based authorization.
+- Designed an optimized **database schema** with indexed tables for improved query performance.
+- Added **pickup scheduling** and **complaint management** features to facilitate structured waste collection.
+- Deployed and tested API performance using **Postman** and **Pytest**. [not yet]
 
-**Steps to Build the Lagos Waste Collection Portal:**
+## Outcome
 
-1. **Define Features:**
-   - Schedule waste pickups  
-   - Submit complaints  
-   - Track service completion
-   - Only role admin can update the status  
+- Improved request processing efficiency, reducing response time for residents.
+- Enhanced complaint tracking, leading to faster resolutions.
+- Successfully handled multiple concurrent requests with minimal latency.
 
-2. **Choose Tech Stack:**  
-   - **Backend:**Python (FastAPI)  
-   - **Database:** PostgreSQL
-   - **Authentication:** JWT for user login  
+---
 
-3. **Plan Database Models:**  
-   - **User:** id, name, email, password, location, role, created_at, updated_at  
-   - **PickupRequest:** id, user_id, scheduled_date, status, location, created_at, updated_at  
-   - **Complaint:** id, user_id, description, status,admin_response, created_at, updated_at
+## Project Structure 📂
 
-4. **Set Up Backend:**  
-   - Create routes: `/schedule-pickup`, `/submit-complaint`, `/track-status`  
-   - Implement CRUD operations  
-   - Add authentication & authorization  
+```markdown
+wasteApi/
+│── alembic/            # Database migration folder
+│── app/
+│   ├── routers/
+│   │   ├── auth.py           # Authentication routes
+│   │   ├── complaint.py      # Complaint management routes
+│   │   ├── pickuprequest.py  # Request management routes
+│   │   ├── users.py          # User management routes
+│   ├── config.py             # Configuration settings
+│   ├── database.py           # Database connection setup
+│   ├── main.py               # Application entry point
+│   ├── models.py             # Database models (User, PickupRequest, Complaint)
+│   ├── oauth2.py             # Authentication logic (JWT handling, role checks)
+│   ├── utils.py              # Utility functions (password hashing, token creation)
+│── scripts/                  # Additional scripts (if any)
+│── tests/                    # Test cases for the API
+│── requirements.txt          # Project dependencies
+```
 
-5. **Deploy:**  
-   - Use platforms like Render, Railway, or Heroku for quick deployment  
+## Features
 
-6. **Bonus:**  
-   - Add admin dashboard for service management  
-   - Implement geolocation for route optimization  
+1. **User Authentication**
+   - Residents and admins can register and log in using JWT authentication.
+   - Role-based access ensures only admins can manage assignments and status updates.
 
-**Database Model for the Lagos Waste Collection Portal:**  
+2. **Pickup Request Management**
+   - Residents can schedule pickups with preferred dates and locations.
+   - Admins can track and update the status of requests (pending, in-progress, completed, canceled).
 
-1. **Users Table**  
-   - `id` (PK): UUID  
-   - `name`: VARCHAR  
-   - `email`: VARCHAR (unique)  
-   - `password_hash`: TEXT  
-   - `location`: TEXT  
-   - `role`: ENUM ('resident', 'admin')  
-   - `created_at`: TIMESTAMP  
-   - `updated_at`: TIMESTAMP  
+3. **Complaint Handling**
+   - Users can submit complaints related to waste collection issues.
+   - Admins review and provide responses to complaints.
 
-2. **PickupRequests Table**  
-   - `id` (PK): UUID  
-   - `user_id` (FK): UUID → Users(id)  
-   - `scheduled_date`: DATE  
-   - `status`: ENUM ('pending', 'in_progress', 'completed', 'cancelled')  
-   - `location`: str
-   - `created_at`: TIMESTAMP  
-   - `updated_at`: TIMESTAMP  
+4. **Admin Dashboard**
+   - Admins can assign waste collection tasks to workers and manage complaints efficiently.
 
-3. **Complaints Table**  
-   - `id` (PK): UUID  
-   - `user_id` (FK): UUID → Users(id)  
-   - `description`: TEXT  
-   - `status`: ENUM ('pending', 'reviewed', 'resolved')  
-   - `response`: TEXT (optional admin response)  
-   - `created_at`: TIMESTAMP  
-   - `updated_at`: TIMESTAMP  
+---
 
- **Plan to build the authentication aspect:**  
+## Deployment & Testing
 
-1. **User model** with secure password storage.  
-2. **Signup & Login** routes.  
-3. **JWT token generation** for sessions.  
+- Deployed using **Render** (or alternatives like Heroku, Railway).
+- API testing performed using **Postman** and automated with **Pytest**.
 
-**Resident SignUp:**  
+---
 
-- Creates a resident user by default.  
-- Checks for duplicate usernames.  
-- Returns a success message after signup.
+## API Endpoints Overview
+
+### Authentication
+
+- `POST /signup` - Register a new Resident
+- `POST /login` - Authenticate Resident and generate JWT
+- `POST /admin/signup` - Register a new Admin
+- `POST /admin/login` - Authenticate Admin and generate JWT
+- `PUT /approve/{user_id}` - Approve an Admin's account (SuperAdmin only)
+
+### User Profile
+
+- `GET /users/` - Retrieve user details (superuser only)
+- `GET /users/{username}` - Retrieve user details (this.user only)
+- `PUT /users/` - Update user details (this.user only)
+
+### Pickup Requests
+
+- `POST /pickup/` - Schedule a new pickup request
+- `GET /pickup/{request_id}` - Retrieve a specific pickup request
+- `PUT /pickup/{request_id}` - Update the status of a request
+- `DELETE /pickup/{request_id}` - Cancel a request (this.user only)
+- `PUT /pickup/adminUpdate/` - Update the status of a request (Admin only)
+
+### Complaints
+
+- `POST /complaint/` - Schedule a new complaint
+- `GET /complaint/{complaint_id}` - Retrieve a specific complaint
+- `PUT /complaint/{complaint_id}` - Update the status of a request
+- `DELETE /complaint/{complaint_id}` - Cancel a request (this.user only)
+- `PUT /complaint/adminUpdate/` - Update the status of a request (Admin only)
+
+---
+
+## Technologies Used
+
+- **FastAPI** (Backend framework)
+- **PostgreSQL** (Database)
+- **JWT Authentication** (Security)
+- **Docker** (For containerized deployment) [Not yet]
+- **Pytest** (API testing) [Not yet]
+
+---
+---
+
+## Installation & Setup 🚀
+
+1 **Clone the repository:**  
+
+```bash
+git clone https://github.com/yourusername/lagos-waste-portal.git
+cd lagos-waste-portal
+```
+
+2 **Create and activate a virtual environment:**  
+
+```bash
+python -m venv env
+env\Scripts\activate
+```
+
+3 **Install dependencies:**  
+
+```bash
+pip install -r requirements.txt
+```
+
+4 **Run the application:**  
+
+```bash
+uvicorn app.main:app --reload
+```
+
+5 **Access the API Docs:**  
+
+- Visit: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## Usage
+
+### Resident Flow
+
+1. Sign up/login.  
+2. Request a pickup.  
+3. Track request status.  
+4. Submit and view complaints.  
+
+### Admin Flow
+
+1. Login (must be approved by another admin if newly created).  
+2. Approve other admin accounts.  
+3. View and assign pickup requests.  
+4. Respond to and resolve complaints.  
+
+---
+
+## Deployment
+
+To run with Docker:  
+
+```bash
+docker build -t lagos-waste-portal .
+docker run -p 8000:8000 lagos-waste-portal
+```
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+ **Let’s keep Lagos clean together!** 🌱

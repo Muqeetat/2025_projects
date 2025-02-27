@@ -4,7 +4,7 @@ from .. import models
 from ..models import PickupRequest, RequestUpdate, User, RequestCreate
 from app.database import get_session
 from datetime import date
-from ..oauth2 import create_access_token, get_current_user, require_role
+from ..oauth2 import get_current_user, require_role
 from sqlalchemy import and_
 
 
@@ -22,7 +22,7 @@ def create_request(request: RequestCreate, session: Session = Depends(get_sessio
         raise HTTPException(status_code=403, detail=f"only residents in {current_user.location} can make a request")
 
     if current_user.id != request.resident_id:
-        raise HTTPException(status_code=403, detail=f"Only the resident can make a request for themselves")
+        raise HTTPException(status_code=403, detail="Only the resident can make a request for themselves")
     
     if request.scheduled_date <= date.today():
         raise HTTPException(status_code=403, detail="Scheduled date must be in the future")
@@ -42,7 +42,7 @@ def create_request(request: RequestCreate, session: Session = Depends(get_sessio
     return new_request
 
 
-# Combined endpoint to get PickupRequests by ID, location, or all
+# Get PickupRequests by ID, location, or all
 @router.get("/", response_model=list[PickupRequest], response_model_exclude={"id","created_at", "updated_at"})
 def get_pickup_requests(
     request_id: int = None,
@@ -68,6 +68,9 @@ def get_pickup_requests(
     
     if current_user.role == 'resident':
         query= query.filter(PickupRequest.resident_id == current_user.id)
+    
+    if current_user.role == 'admin' and current_user.id != 1:
+        query= query.filter(PickupRequest.admin_id == current_user.id)
         
     requests = session.exec(query.offset(skip).limit(limit)).all()
 
@@ -82,6 +85,7 @@ def get_pickup_requests(
 def update_request(request_id: int, request_data: RequestUpdate, session: Session = Depends(get_session),current_user: User = Depends(get_current_user)):
 
     request = session.get(PickupRequest, request_id)
+
     if not request:
         raise HTTPException(status_code=404,  detail=f"Request with id {request_id} not found")
 
@@ -115,14 +119,15 @@ def delete_request(request_id: int, session: Session = Depends(get_session),curr
         raise HTTPException(status_code=404, detail=f"Request with id {request_id} not found")
 
     if request.resident_id != current_user.id:
-        raise HTTPException(status_code=403, detail=f"Not authorized to perform action")
+        raise HTTPException(status_code=403, detail="Not authorized to perform action")
     session.delete(request)
     session.commit()
     return request
 
 
+# assign or reassign an admin to a request / update a request
 @router.put("/adminUpdate/")
-def approve_admin(
+def assign_admin(
     request_id: int, 
     admin_id: int = None,  # Optional: Only admin 1 can assign/reassign
     admin_update: str = None, 
@@ -139,16 +144,22 @@ def approve_admin(
         user = session.get(User, admin_id)
         if not user:
             raise HTTPException(status_code=404, detail=f"User with id {admin_id} not found")
+        
+        if user.role != "admin":
+            raise HTTPException(status_code=400, detail="User is not an admin")
+        
+        if user.is_approved == False:
+            raise HTTPException(status_code=400, detail="Admin account not approved")
 
         if request.admin_id == admin_id:
-            raise HTTPException(status_code=400, detail="Request is already assigned to this admin.")
+            raise HTTPException(status_code=400, detail=f"Request is already assigned to admin {admin_id}.")
 
         if current_user.id != 1:
             raise HTTPException(status_code=403, detail="Only admin 1 can assign or reassign requests.")
 
         request.admin_id = admin_id  # Assign or reassign admin
 
-    # If admin_update is provided, only the assigned admin (excluding Admin 1) can update it
+    # If admin_update is provided, only the assigned admin can update it
     if admin_update:
         if request.admin_id is None:
             raise HTTPException(status_code=403, detail="Request must be assigned to an admin before updating.")
@@ -161,5 +172,3 @@ def approve_admin(
     session.refresh(request)
     
     return request
-
-

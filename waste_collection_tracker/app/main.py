@@ -13,10 +13,11 @@ app = FastAPI()
 
 
 # the routers defined in the routers folder
+app.include_router(auth.router)
+app.include_router(user.router)
 app.include_router(complaint.router)
 app.include_router(pickuprequest.router)
-app.include_router(user.router)
-app.include_router(auth.router)
+
 
 
 @app.get("/")
