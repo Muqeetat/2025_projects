@@ -17,8 +17,8 @@ def resident_signup(user:UserCreate,session: Session = Depends(get_session)):
     # Check if the username is already taken
     if session.exec(select(User).where(User.name == user.name)).first():
         raise HTTPException(status_code=400, detail="Username already Exists")
+        
     # Create a new user with default role 'resident'
-    
     user.password = get_password_hash(user.password)
 
     new_user = User(**user.model_dump())
@@ -29,7 +29,7 @@ def resident_signup(user:UserCreate,session: Session = Depends(get_session)):
     # return user 
 
 
-@router.post("/resident/login")
+@router.post("/login")
 def resident_login(user_credential: OAuth2PasswordRequestForm=Depends(), session: Session = Depends(get_session)):
     if not user_credential.username or not user_credential.password:
         raise HTTPException(status_code=422, detail="Username and password must be provided")
@@ -67,7 +67,7 @@ def admin_signup(user_data: UserCreate, session: Session = Depends(get_session))
     # return new_user
     return {"msg": f"Admin account created successfully for {user_data.name}"}
 
-@router.post("/login")
+@router.post("/admin/login")
 def admin_login(credentials: OAuth2PasswordRequestForm=Depends(), session: Session = Depends(get_session)):
     if not credentials.username or not credentials.password:
         raise HTTPException(status_code=422, detail="Username and password must be provided")

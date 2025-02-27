@@ -39,6 +39,8 @@ def get_user(
 
     users = session.exec(query.offset(skip).limit(limit)).all()
 
+    if current_user.id != 1:
+        raise HTTPException(status_code=403, detail="Not authorized to perform action")
     if not users:
         raise HTTPException(status_code=404, detail="No matching users found")
     return users

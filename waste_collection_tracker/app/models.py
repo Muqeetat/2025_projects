@@ -32,7 +32,7 @@ class UserLogin(SQLModel):
 
 class UserCreate(UserLogin):
     email: Optional[str] = None
-    location: Locations  # Use Enum type for strong typing
+    location: Locations 
 
 class UserUpdate(SQLModel):
     name: Optional[str] = None
@@ -50,10 +50,13 @@ class RequestUpdate(SQLModel):
     resident_update: Optional[str] = None
     location: Optional[Locations] = None
 
+class ComplaintCreate(SQLModel):
+    resident_id :int
+    description: str
+
 class ComplaintUpdate(SQLModel):
     description: Optional[str] = None
-    status: Optional[str] = None
-    admin_response: Optional[str] = None
+    resident_update: Optional[str] = None
 
 # User Model
 class User(SQLModel, table=True):
@@ -102,7 +105,7 @@ class Complaint(SQLModel, table=True):
     description: str
     admin_id: Optional[int] = Field(foreign_key="user.id", nullable=True)
     admin_update: Optional[AdminStatus] = Field(sa_column=Column(SQLAEnum(AdminStatus)))
-    admin_response: Optional[str] = None  # Now optional
+    admin_response: Optional[str] = None 
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(sa_column=Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow))
 
