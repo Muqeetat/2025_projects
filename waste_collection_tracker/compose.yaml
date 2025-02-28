@@ -10,7 +10,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/waste_db  # Database connection string
     volumes:
-      - .:/app  # Mounts the local project directory into the container
+      - .:/app  # Mounts the local project directory (including .env) inside the container 
 
   db:
     image: postgres:15  # Uses PostgreSQL version 15
