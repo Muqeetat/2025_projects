@@ -1,0 +1,35 @@
+
+services:
+  app:
+    build: .  # Builds the FastAPI app from the current directory
+    container_name: waste_collection_app  # Name of the container
+    ports:
+      - "8001:8000"  #Host port 8001 -> Container port 8000
+    depends_on:
+      - db  # Ensures the database starts before the app
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/waste_db  # Database connection string
+    volumes:
+      - .:/app  # Mounts the local project directory into the container
+
+  db:
+    image: postgres:15  # Uses PostgreSQL version 15
+    container_name: waste_collection_db  # Name of the database container
+    restart: always  # Ensures the database restarts on failure
+    environment:
+      POSTGRES_USER: user  # Sets the database user
+      POSTGRES_PASSWORD: password  # Sets the database password
+      POSTGRES_DB: waste_db  # Names the database
+    ports:
+      - "5432:5432"  # Exposes the PostgreSQL port
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Persists database data
+  adminer:
+    image: adminer  # Uses Adminer for database management
+    container_name: waste_collection_adminer  # Name of the Adminer container
+    restart: always  # Ensures Adminer restarts on failure
+    ports:
+      - "8081:8080"  # Host port 8001 -> Container port 8000
+
+volumes:
+  pgdata:  # Defines a persistent volume for PostgreSQL data

@@ -1,4 +1,4 @@
-import uvicorn
+# import uvicorn
 from typing import Optional
 from fastapi import Depends, FastAPI, HTTPException
 from datetime import datetime
@@ -25,5 +25,5 @@ def root():
     return {"message": "Hello World"}
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="127.0.0.1", port=8000)

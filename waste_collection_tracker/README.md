@@ -115,16 +115,30 @@ wasteApi/
 - **Pytest** (API testing) [Not yet]
 
 ---
+
+## Usage
+
+### Resident Flow
+
+1. Sign up/login.  
+2. Request a pickup.  
+3. Track request status.  
+4. Submit and view complaints.  
+
+### Admin Flow
+
+1. Login (must be approved by another admin if newly created).  
+2. Approve other admin accounts.  
+3. View and assign pickup requests.  
+4. Respond to and resolve complaints.  
+
 ---
 
-## Installation & Setup 🚀
+## Installation & Setup
 
 1 **Clone the repository:**  
 
-```bash
-git clone https://github.com/yourusername/lagos-waste-portal.git
-cd lagos-waste-portal
-```
+ download the waste_collection_tracker repository folder
 
 2 **Create and activate a virtual environment:**  
 
@@ -149,36 +163,27 @@ uvicorn app.main:app --reload
 
 - Visit: [http://localhost:8000/docs](http://localhost:8000/docs)
 
----
+## Running with Docker  
 
-## Usage
+### Prerequisites  
 
-### Resident Flow
+- Install [Docker](https://docs.docker.com/get-docker/)  
 
-1. Sign up/login.  
-2. Request a pickup.  
-3. Track request status.  
-4. Submit and view complaints.  
+- Build and start the containers:  
 
-### Admin Flow
+   ```sh
+   docker-compose up --build  
+   ```  
 
-1. Login (must be approved by another admin if newly created).  
-2. Approve other admin accounts.  
-3. View and assign pickup requests.  
-4. Respond to and resolve complaints.  
+- Access the API:  
+  - **Docs:** [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)  
+  - **Adminer (DB UI):** [http://127.0.0.1:8081](http://127.0.0.1:8081)  
 
----
+- Stop the containers:  
 
-## Deployment
-
-To run with Docker:  
-
-```bash
-docker build -t lagos-waste-portal .
-docker run -p 8000:8000 lagos-waste-portal
-```
-
----
+   ```sh
+   docker-compose down  
+   ```  
 
 ## License
 
