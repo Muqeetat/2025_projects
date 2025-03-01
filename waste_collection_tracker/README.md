@@ -43,6 +43,10 @@ wasteApi/
 │   ├── utils.py              # Utility functions (password hashing, token creation)
 │── scripts/                  # Additional scripts (if any)
 │── tests/                    # Test cases for the API
+|── Dockerfile                # Docker configuration file
+|── docker-compose.yml        # Docker Compose configuration
+│── .env                      # Environment variables (DB URL, JWT secret, etc.)
+│── README.md                 # Project overview and setup instructions
 │── requirements.txt          # Project dependencies
 ```
 
@@ -136,30 +140,44 @@ wasteApi/
 
 ## Installation & Setup
 
-1 **Clone the repository:**  
+1 **Clone the repository or download the zip file.:**  
+ 
+```bash
+git clone   
+cd waste_collection_tracker
+```
 
- download the waste_collection_tracker repository folder
+2 **Create .env file:**
 
-2 **Create and activate a virtual environment:**  
+```bash
+   DATABASE_URL = 'postgresql://yourusername:yourpassword@localhost:5432/wastetkerrac'
+
+   SECRET_KEY=your_secret_key
+   ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=60
+   DEBUG=True
+```
+
+3 **Create and activate a virtual environment:**  
 
 ```bash
 python -m venv env
 env\Scripts\activate
 ```
 
-3 **Install dependencies:**  
+4 **Install dependencies:**  
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4 **Run the application:**  
+5 **Run the application:**  
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-5 **Access the API Docs:**  
+6 **Access the API Docs:**  
 
 - Visit: [http://localhost:8000/docs](http://localhost:8000/docs)
 
